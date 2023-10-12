@@ -17,7 +17,7 @@ raytracer = Raytracer(screen)
 
 #Se puede usar cualquier formato de imagen.
 #hdri-hub.com
-#raytracer.envMap = pygame.image.load("images/day.jpg")
+raytracer.envMap = pygame.image.load("images/day.jpg")
 raytracer.rtClearColor(0.25,0.25,0.25)
 
 #Carga de texturas
@@ -36,19 +36,13 @@ c2 = Material(diffuse=(0.890,746,0.37))
 c3 = Material(diffuse=(0.26,0.35,0.26))
 c4 = Material(diffuse=(0.59,0.98,0.35))
 
-#Colocacion de paredes
-raytracer.scene.append(Plane(position=(0,-2,0), normal = (0,1,-0.02), material = c1))
-raytracer.scene.append(Plane(position=(0,5,0), normal = (0,1,0.2), material = c2))
-raytracer.scene.append(Plane(position=(4,0,0), normal = (1,0,0.2), material = c3))
-raytracer.scene.append(Plane(position=(-4,0,0), normal = (1,0,-0.2), material = c4))
-raytracer.scene.append(Plane(position=(0,0,-20), normal = (0,0,0.2), material = concrete))
+#Colocacion de plano base
+#raytracer.scene.append(Plane(position=(0,-2,0), normal = (0,1,-0.02), material = c1))
 
-#Colocacion de cubos
-raytracer.scene.append(AABB(position=(1.5,-0.5,-5), size = (1.5,1.5,1.5), material = couch1))
+#Colocacion de cápsulas
+raytracer.scene.append(Capsule(position = (0,0,-5), radius = 2, scale=(2, 1, 4), material = couch1))
 raytracer.scene.append(AABB(position=(-1.5,-0.5,-5), size = (1.25,1.25,1.25), material = couch2))
-
-#Colocacion de disco
-raytracer.scene.append(Disk(position=(0,1,-5), normal = (0,1,0), radius= 2, material= reflectFlow))
+#raytracer.scene.append(Sphere(position = (0,0,-5), radius = 1, material = couch1))
 
 #iluminacion minima del ambiente
 raytracer.lights.append(AmbientLight(intensity=0.3))

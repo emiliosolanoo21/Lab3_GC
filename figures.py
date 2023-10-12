@@ -29,6 +29,8 @@ class Sphere(Shape):
         
         #if radius < d: no hay contacto (False)
         #if radius > d: si hay contacto (True)
+        
+        #Da una raiz negativa, tal vez por eso no se traza el ovalo
         d = (lengthL**2 - tca**2)**0.5
         if d > self.radius:
             return None
@@ -191,3 +193,101 @@ class AABB(Shape):
                          normal = intersect.normal,
                          texcoords= (u,v),
                          obj = self)
+
+""" class Capsule(Shape):
+    def __init__(self, position, radius, height, material):
+        self.radius = radius
+        self.height = height
+        self.normal = ml.normalizeV([0, 1, 0])
+        super().__init__(position, material)
+
+    def ray_intersect(self, orig, dir):
+        # Primero, verifica si el rayo interseca con las dos semiesferas
+        # ubicadas en los extremos de la cápsula.
+        
+        sphereList = (0, self.height / 2, 0)
+        top_sphere = Sphere(ml.addV(self.position, sphereList), self.radius, self.material)
+        bottom_sphere = Sphere(ml.substractV(self.position, sphereList), self.radius, self.material)
+
+        top_intersection = top_sphere.ray_intersect(orig, dir)
+        bottom_intersection = bottom_sphere.ray_intersect(orig, dir)
+
+        # Calcula la intersección con el cilindro central.
+        # Esto se puede hacer calculando la intersección con un cilindro infinito
+        # y luego verificando si la intersección está dentro de la altura de la cápsula.
+        
+        originList = (0, self.height / 2, 0)
+        cylinder_origin = ml.substractV(self.position, originList)
+        t_cylinder = ml.dotProd((ml.substractV(cylinder_origin, orig)), self.normal) / ml.dotProd(dir, self.normal)
+        cylinder_intersection_point = ml.addV(orig, ml.VxE(dir, t_cylinder))
+
+        if (
+            cylinder_origin[1] <= cylinder_intersection_point[1] <= (cylinder_origin[1] + self.height)
+            and t_cylinder > 0
+        ):
+            # El rayo intersecta con el cilindro dentro de la altura de la cápsula.
+            # Calcula la normal y otros datos necesarios.
+            normalC = ml.normalizeV(ml.substractV(cylinder_intersection_point, self.position))
+            u = (atan2(normalC[2], normalC[0]) / (2 * pi)) + 0.5
+            v = acos(normalC[1]) / pi
+
+            return Intercept(
+                distance=t_cylinder,
+                point=cylinder_intersection_point,
+                normal=normalC,
+                texcoords=(u, v),
+                obj=self,
+            )
+
+        # Compara las intersecciones con las dos semiesferas y devuelve la más cercana.
+        if top_intersection and bottom_intersection:
+            return top_intersection if top_intersection.distance < bottom_intersection.distance else bottom_intersection
+        return top_intersection if top_intersection else bottom_intersection """
+
+#Esfera ovalada     
+class Capsule(Shape):
+    def __init__(self, position, radius, material, scale=(1, 1, 1)):
+        self.radius = radius
+        self.scale = scale
+        super().__init__(position, material)
+
+    def ray_intersect(self, orig, dir):
+        # Aplicar la escala a la dirección del rayo.
+        dir = [dir[0] * (1.0 / self.scale[0]), dir[1] * (1.0 / self.scale[1]), dir[2] * (1.0 / self.scale[2])]
+
+        # Transformar el origen del rayo por la escala.
+        orig = [orig[0] * self.scale[0], orig[1] * self.scale[1], orig[2] * self.scale[2]]
+        
+        l = ml.substractV(self.position, orig)
+        lengthL = ml.magV(l)
+        tca = ml.dotProd(l,dir)
+        
+        #if radius < d: no hay contacto (False)
+        #if radius > d: si hay contacto (True)
+        d = (lengthL**2 - tca**2)**0.5
+        if d > self.radius:
+            return None
+        
+        thc = (self.radius**2 - d**2)**0.5
+        t0 = tca - thc
+        t1 = tca + thc
+        
+        if t0<0:
+            t0 = t1
+        if t0<0:
+            return None
+        
+        #P = O+D*t0
+        p = ml.addV(orig,ml.VxE(dir, t0))
+        normal = ml.substractV(p,self.position)
+        normal = ml.normalizeV(normal)
+        
+        u = (atan2(normal[2], normal[0]) / (2*pi)) + 0.5
+        v = acos(normal[1]) / pi
+        
+        return Intercept(distance = t0,
+                         point = p,
+                         normal = normal,
+                         texcoords= (u,v),
+                         obj = self)
+

@@ -118,9 +118,10 @@ class PointLight(Light):
         super().__init__(intensity, color, "Point")
         
     def getDiffuseColor(self, intercept):
+        #Esto es igual a lo que esta en el SpecularColor?
         dir = ml.substractV(self.point, intercept.point)
-        R = ml.normalizeV(dir)
-        dir = dir/R
+        R = ml.magV(dir)
+        dir = ml.normalizeV(dir)
         
         intensity = ml.dotProd(intercept.normal, dir) * self.intensity
         intensity *= 1 - intercept.obj.material.ks

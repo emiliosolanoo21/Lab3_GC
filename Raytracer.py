@@ -5,8 +5,8 @@ from figures import *
 from lights import *
 from materials import *
 
-width = 100
-height = 100
+width = 512
+height = 512
 
 pygame.init()
 
@@ -21,33 +21,33 @@ raytracer.envMap = pygame.image.load("images/day.jpg")
 raytracer.rtClearColor(0.25,0.25,0.25)
 
 #Carga de texturas
-couch1Texture = pygame.image.load("images/couch1.jpg")
-couch2Texture = pygame.image.load("images/couch2.jpg")
+ballTexture = pygame.image.load("images/Jabulani.jpg")
 flowTexture = pygame.image.load("images/flow.jpg")
+rubixTexture = pygame.image.load("images/rubix.jpg")
 
 #Carga de materiales
-couch1 = Material(texture = couch1Texture, spec = 20, ks = 0.01)
-couch2 = Material(texture = couch2Texture, spec = 20, ks = 0.01)
+rugbyBall = Material(texture = ballTexture, spec = 20, ks = 0.01)
 reflectFlow = Material(texture = flowTexture, spec = 64, ks = 0.1, matType= REFLECTIVE)
+rubix = Material(texture = rubixTexture, spec = 64, ks = 0.1, matType= TRANSPARENT)
 
-concrete = Material(diffuse=(0.5,0.5,0.5))
-c1 = Material(diffuse=(0.67,0.83,0.78))
-c2 = Material(diffuse=(0.890,746,0.37))
-c3 = Material(diffuse=(0.26,0.35,0.26))
-c4 = Material(diffuse=(0.59,0.98,0.35))
+
 
 #Colocacion de plano base
 #raytracer.scene.append(Plane(position=(0,-2,0), normal = (0,1,-0.02), material = c1))
 
 #Colocacion de cápsulas
-raytracer.scene.append(Capsule(position = (0,0,-5), radius = 2, scale=(2, 1, 4), material = couch1))
-raytracer.scene.append(AABB(position=(-1.5,-0.5,-5), size = (1.25,1.25,1.25), material = couch2))
-#raytracer.scene.append(Sphere(position = (0,0,-5), radius = 1, material = couch1))
+raytracer.scene.append(Ellipsoid(position = (-1.2,-1,-5), radii = (1, 1.5, 0.2), material = rubix))
+raytracer.scene.append(Ellipsoid(position = (1,1.5,-5), radii = (1.35, 0.6, 1.5), material = rugbyBall))
+raytracer.scene.append(Ellipsoid(position = (0,-0.5,-10), radii = (1.25,2,1), material = reflectFlow))
+
+
 
 #iluminacion minima del ambiente
 raytracer.lights.append(AmbientLight(intensity=0.3))
 raytracer.lights.append(DirectionalLight(direction=(1,1,-2), intensity=0.95))
-raytracer.lights.append(PointLight(point=(0,0,-5), intensity=150, color= (1,1,1)))
+
+#No colocar en la misma ubicacion que ninguna figura
+#raytracer.lights.append(PointLight(point=(0,2,-5), intensity=10, color= (1,1,1)))
 
 raytracer.rtClear()
 raytracer.rtRender()

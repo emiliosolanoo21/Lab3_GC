@@ -131,6 +131,13 @@ def mulV(v1, v2):
     r = [v1[i] * v2[i] for i in range(len(v1))]
     return r
 
+def divV(v1, v2):
+    if len(v1) != len(v2):
+        raise ValueError("Se necesitan vectores de la misma magnitud.")
+
+    r = [v1[i] / v2[i] for i in range(len(v1))]
+    return r
+
 #Producto cruz
 def crossProd(a,b):
     cross_product = [a[1] * b[2] - a[2] * b[1],
@@ -167,8 +174,11 @@ def VplusE(v, e):
     return r
 
 def VdivE(v, e):
-    r = [e/v[i] for i in range(len(v))]
-    return r
+    if e == 0:
+        return [0.0] * len(v)  # Devuelve un vector nulo
+    else:
+        r = [v[i] / e for i in range(len(v))]
+        return r
 
 #Agregar en libreria matematica
 def reflectVector(normal, direction):

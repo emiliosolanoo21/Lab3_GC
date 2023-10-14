@@ -1,6 +1,7 @@
 import mathLib as ml
 from math import acos, asin
 
+#Error corregido en la creacion de ovalos.
 def refractVector(normal, incident, n1, n2):
     #Snell's Law
     c1 = ml.dotProd(normal, incident)
